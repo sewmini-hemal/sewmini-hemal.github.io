@@ -2,12 +2,14 @@
   "name": "react-example",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://sewmini-hemal.github.io",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
+    "deploy": "gh-pages -d dist",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
@@ -34,6 +36,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "autoprefixer": "^10.4.21",
+    "gh-pages": "^6.3.0",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
