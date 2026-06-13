@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (request.auth.token.email.lower() == 'h.githmin@gmail.com' && request.auth.token.email_verified == true)
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Collections ---
+
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false; 
+    }
+
+    match /tables/{tableId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(tableId);
+    }
+
+    match /guests/{guestId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(guestId) && isValidGuest(incoming());
+      allow update: if isAdmin() && isValidGuest(incoming());
+      allow delete: if isAdmin();
+    }
+
+    function isValidGuest(data) {
+      return data.keys().hasAll(['name', 'tableId', 'updatedAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.tableId is string && data.tableId.size() > 0 &&
+             data.updatedAt == request.time;
+    }
+  }
+}

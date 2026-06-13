@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "Guest": {
+      "title": "Guest",
+      "description": "A wedding guest and their table assignment.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the guest" },
+        "tableId": { "type": "string", "description": "ID of the assigned table" },
+        "addedBy": { "type": "string", "description": "UID of the admin who added the guest" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "tableId"]
+    },
+    "Table": {
+      "title": "Table",
+      "description": "A table at the wedding venue.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Table name or number (e.g., Table 1)" },
+        "location": { "type": "string", "enum": ["inside", "outdoor"], "description": "Location of the table" },
+        "capacity": { "type": "integer", "description": "Max number of seats" },
+        "shape": { "type": "string", "description": "Shape of the table" }
+      },
+      "required": ["name", "location"]
+    },
+    "Admin": {
+        "title": "Admin",
+        "description": "A user with administrative privileges.",
+        "type": "object",
+        "properties": {
+            "email": { "type": "string" }
+        },
+        "required": ["email"]
+    }
+  },
+  "firestore": {
+    "guests/{guestId}": {
+      "schema": "Guest",
+      "description": "Collection of wedding guests."
+    },
+    "tables/{tableId}": {
+      "schema": "Table",
+      "description": "Collection of tables."
+    },
+    "admins/{adminId}": {
+        "schema": "Admin",
+        "description": "Authorized administrators."
+    }
+  }
+}
